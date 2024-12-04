@@ -5,19 +5,34 @@ module.exports = fetchAndParse
 module.exports.parse = parse
 module.exports.userAgent = defaultUserAgent
 
-async function fetchAndParse (url, { userAgent = defaultUserAgent } = {}) {
-  try {
-    const r = await fetch(url, {
-      headers: {
-        userAgent
-      }
-    })
+async function fetchAndParse (url, { userAgent = defaultUserAgent, redirect = 'follow', timeout = 3000, signal } = {}) {
+  let timer
 
+  const options = {
+    redirect,
+    headers: {
+      'User-Agent': userAgent,
+      'Accept': '*/*'
+    }
+  }
+
+  if (signal) {
+    options.signal = signal
+  } else {
+    const ac = new AbortController()
+    options.signal = ac.signal
+    timer = setTimeout(() => ac.abort(), timeout)
+  }
+
+  try {
+    const r = await fetch(url, options)
+    if (timer) clearTimeout(timer)
     if (!r.ok) return null
 
     const t = await r.text()
     return parse(t, r.url)
   } catch {
+    if (timer) clearTimeout(timer)
     return null
   }
 }
