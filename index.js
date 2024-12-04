@@ -129,7 +129,7 @@ function getFavicon (html, url) {
 
   if (m) {
     const href = m[0].match(/href=["']([^"']+)/)
-    if (href) return href[1]
+    if (href) return new URL(href[1], url).href
   }
 
   return new URL('/favicon.ico', url).href
