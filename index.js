@@ -132,8 +132,7 @@ function getFavicon (html, url) {
     if (href) return href[1]
   }
 
-  const rootUrl = new URL('/', url).href
-  return rootUrl + 'favicon.ico'
+  return new URL('/favicon.ico', url).href
 }
 
 function normalize (text) {
