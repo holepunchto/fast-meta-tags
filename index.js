@@ -44,11 +44,13 @@ function parse (html, url) {
   const favicon = getFavicon(head, url)
   const title = getTitle(head)
   const meta = getMeta(head)
+  const img = getImageUrls(html)
 
   return {
     favicon,
     title,
     meta,
+    img,
     url
   }
 }
@@ -117,6 +119,23 @@ function getMeta (html) {
   }
 
   return meta
+}
+
+function getImageUrls(html) {
+  const imgUrls = [];
+  const regex = /<img[^>]+src=["']([^"']+)["']/g;
+  let match;
+
+  // Use a regular expression to find all <img> tags and extract the src attribute
+  while ((match = regex.exec(html)) !== null) {
+    imgUrls.push(match[1]); // Push the src URL into the array
+  }
+
+  return imgUrls;
+
+
+  // Return the array of image URLs
+  return imgUrls;
 }
 
 function getTitle (html) {
