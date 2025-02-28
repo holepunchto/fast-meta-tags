@@ -151,11 +151,18 @@ function getFavicon (html, url) {
 }
 
 function normalize (text) {
-  return text.replace(/&#\d+;/g, inlineNumericEntity).replace(/&(amp|nbsp|lt|gt|quot|apos);/g, inlineEntity)
+  return text
+  .replace(/&#\d+;/g, inlineNumericEntity)
+  .replace(/&#x([0-9A-Fa-f]+);/g, inlineHexEntity)
+  .replace(/&(amp|nbsp|lt|gt|quot|apos);/g, inlineEntity)
 }
 
 function inlineNumericEntity (s) {
-  return String.fromCharCode(s.slice(2, -1))
+  return String.fromCharCode(+s.slice(2, -1))
+}
+
+function inlineHexEntity(s) {
+  return String.fromCharCode(parseInt(s.slice(3, -1), 16))
 }
 
 function inlineEntity (s) {
@@ -165,7 +172,7 @@ function inlineEntity (s) {
     case '&lt;': return '<'
     case '&gt;': return '>'
     case '&quot;': return '"'
-    case '&quot;': return '\''
+    case '&apos;': return '\''
   }
 
   return s
