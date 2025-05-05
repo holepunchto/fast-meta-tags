@@ -1,3 +1,5 @@
+const timeoutSignal = require('timeout-abort-signal')
+
 // just something generic
 const defaultUserAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/122.0'
 
@@ -8,32 +10,25 @@ module.exports.userAgent = defaultUserAgent
 async function fetchAndParse (url, { userAgent = defaultUserAgent, redirect = 'follow', timeout = 3000, signal } = {}) {
   let timer
 
+  const t = timeoutSignal(signal, timeout)
   const options = {
     redirect,
+    signal: t.signal,
     headers: {
       'User-Agent': userAgent,
       'Accept': '*/*'
     }
   }
 
-  if (signal) {
-    options.signal = signal
-  } else {
-    const ac = new AbortController()
-    options.signal = ac.signal
-    timer = setTimeout(() => ac.abort(), timeout)
-  }
-
   try {
     const r = await fetch(url, options)
-    if (timer) clearTimeout(timer)
     if (!r.ok) return null
-
     const t = await r.text()
     return parse(t, r.url)
   } catch {
-    if (timer) clearTimeout(timer)
     return null
+  } finally {
+    t.destroy()
   }
 }
 
