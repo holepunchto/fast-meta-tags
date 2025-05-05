@@ -3,8 +3,9 @@
   "version": "1.3.1",
   "description": "Get the meta tags and title from an url",
   "main": "index.js",
-  "dependencies": {},
-  "devDependencies": {},
+  "dependencies": {
+    "timeout-abort-signal": "^1.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/holepunchto/fast-meta-tags.git"
