@@ -5,11 +5,10 @@ const defaultUserAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Geck
 
 module.exports = fetchAndParse
 module.exports.parse = parse
+module.exports.normalize = normalize
 module.exports.userAgent = defaultUserAgent
 
 async function fetchAndParse (url, { userAgent = defaultUserAgent, redirect = 'follow', timeout = 3000, signal } = {}) {
-  let timer
-
   const t = timeoutSignal(signal, timeout)
   const options = {
     redirect,
@@ -44,7 +43,8 @@ function parse (html, url) {
     favicon,
     title,
     meta,
-    url
+    html,
+    url,
   }
 }
 
